@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <style>
+        html, body, .viewport {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+        }
+        video {
+            width: 100%;
+            height: auto;
+        }
+        .drawingBuffer {
+            /* background: red; */
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div id="interactive" class="viewport"></div>
+    <div class="result"></div>
+
+    <script src="node_modules/quagga/dist/quagga.min.js"></script>
+    <script>
+        Quagga.init({
+            inputStream : {
+                type : "LiveStream",
+            },
+            decoder : {
+                readers : ["i2of5_reader"],
+                debug: {
+                    drawBoundingBox: true,
+                    showFrequency: true,
+                    drawScanline: true,
+                    showPattern: true
+                },
+            }
+        }, function(err) {
+            if (err) {
+                console.log(err);
+                return
+            }
+            console.log("Initialization finished. Ready to start");
+            Quagga.start();
+        });
+
+        Quagga.onDetected((data) => {
+            console.log(data);
+            document.querySelector('.result').innerText = data.codeResult.code;
+        });
+    </script>
+</body>
+</html>
